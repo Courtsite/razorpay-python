@@ -44,7 +44,8 @@ class Client:
         Initialize a Client object with session,
         optional auth handler, and options
         """
-        self.session = session or requests.Session()
+        # Removed session
+        # self.session = session or requests.Session()
         self.auth = auth
         file_dir = os.path.dirname(__file__)
         self.cert_path = file_dir + '/ca-bundle.crt'
@@ -117,9 +118,14 @@ class Client:
 
         url = "{}{}".format(self.base_url, path)
 
-        response = getattr(self.session, method)(url, auth=self.auth,
-                                                 verify=self.cert_path,
-                                                 **options)
+        # Remove usage of session
+        # response = getattr(self.session, method)(url, auth=self.auth,
+        #                                          verify=self.cert_path,
+        #                                          **options)
+
+        # Use requests.request(method, url, **kwargs) instead
+        response = requests.request(method, url, auth=self.auth, verify=self.cert_path, **options)
+
         if ((response.status_code >= HTTP_STATUS_CODE.OK) and
                 (response.status_code < HTTP_STATUS_CODE.REDIRECT)):
             return json.dumps({}) if(response.status_code==204) else response.json()
