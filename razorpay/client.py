@@ -1,6 +1,6 @@
 import os
 import json
-import requests
+import httpx
 import pkg_resources
 
 from pkg_resources import DistributionNotFound
@@ -117,7 +117,9 @@ class Client:
         url = "{}{}".format(self.base_url, path)
 
         # Use requests.request(method, url, **kwargs) instead of sessions originally
-        response = requests.request(method, url, auth=self.auth, verify=self.cert_path, **options)
+        # Use httpx for async support
+        async with httpx.AsyncClient() as client:
+            response = client.request(method, url, auth=self.auth, verify=self.cert_path, **options)
 
         if ((response.status_code >= HTTP_STATUS_CODE.OK) and
                 (response.status_code < HTTP_STATUS_CODE.REDIRECT)):
